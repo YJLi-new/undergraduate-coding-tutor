@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="t d">
+  <title id="t">UG Coding Tutor</title>
+  <desc id="d">One blank at a time. You write every line.</desc>
+
+  <rect width="1280" height="640" fill="#FAFAF7"/>
+
+  <g font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="120" y="250" font-size="96" font-weight="800" fill="#111111" letter-spacing="-3">UG Coding Tutor</text>
+  </g>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="44">
+    <text x="124" y="370" fill="#111111">int b =</text>
+    <line x1="330" y1="378" x2="560" y2="378" stroke="#4F46E5" stroke-width="5" stroke-linecap="round"/>
+    <rect x="568" y="330" width="5" height="52" rx="2" fill="#4F46E5"/>
+    <text x="586" y="370" fill="#111111">;</text>
+  </g>
+
+  <g font-family="ui-sans-serif, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="122" y="470" font-size="30" fill="#6B6B6B">One blank at a time. You write every line.</text>
+  </g>
+</svg>

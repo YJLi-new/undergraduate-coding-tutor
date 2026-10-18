@@ -1,0 +1,11 @@
+{
+  "name": "undergraduate-coding-tutor",
+  "version": "1.0.0",
+  "description": "UG Coding Tutor (Undergraduate Coding Tutor): Socratic, one-blank-at-a-time coding tutor: the learner writes every line, the tutor only shrinks the next step.",
+  "author": {
+    "name": "YJLi-new"
+  },
+  "repository": "https://github.com/YJLi-new/undergraduate-coding-tutor",
+  "license": "MIT",
+  "keywords": ["tutor", "education", "cuda", "socratic", "skill"]
+}

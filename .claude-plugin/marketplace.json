@@ -1,0 +1,14 @@
+{
+  "name": "undergraduate-coding-tutor",
+  "owner": {
+    "name": "YJLi-new"
+  },
+  "plugins": [
+    {
+      "name": "undergraduate-coding-tutor",
+      "source": "./",
+      "description": "UG Coding Tutor (Undergraduate Coding Tutor): Socratic, one-blank-at-a-time coding tutor: the learner writes every line, the tutor only shrinks the next step.",
+      "version": "1.0.0"
+    }
+  ]
+}
