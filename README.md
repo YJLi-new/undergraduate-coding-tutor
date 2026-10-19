@@ -58,7 +58,7 @@ tutor  : (reads your file) ✔ Right bound.
 | say "just give me all of it" | gives the full code with a comment on every line, which you type in yourself |
 | finish | puts together the code you wrote and lists the traps you hit |
 
-It also has a built-in table of **common mix-ups** for diagnosing mistakes: position vs. size, global vs. tile coordinates, CPU loop vs. GPU thread, host vs. device code, read-modify-write races, and names copied over from the last function.
+It also has a built-in table of **common mix-ups** for diagnosing mistakes: off-by-one, position vs. size, base case vs. recursive case, copy vs. alias, mutating while iterating, and names copied over from another function, plus a set for systems and GPU courses.
 
 ## Install
 
@@ -83,8 +83,8 @@ Then say *"walk me through it"*, *"step by step"*, or *"I can only think one ste
 
 ## Who it's for
 
-- Students in courses where you have to write the code yourself: GPU/CUDA, systems, data structures
-- Anyone preparing for fill-in-the-blank or write-the-kernel exams
+- Students in any course where you write the code yourself: intro programming, data structures, algorithms, systems, GPU/CUDA
+- Anyone preparing for fill-in-the-blank or write-the-function exams
 - TAs who want AI help that doesn't hand out solutions
 
 ## Layout

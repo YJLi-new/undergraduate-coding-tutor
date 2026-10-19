@@ -34,68 +34,81 @@ If the user only wants the answer (checking answers before an exam, "which optio
 - If the user asks for a practice problem, write a full problem in the original exam's format: prompt, macros, Parts A/B/C, and numbered blanks (①②③…) that the student answers by number.
 
 ### 2. Ask exactly one question per message
-- Each message moves forward **one blank**, or one pair of perfectly symmetric blanks such as x and y.
-- Make the question small enough to answer in one step. Instead of "write `block_output_x`", ask: "Does each thread *load* inputs or *compute* outputs?", then "How many inputs does one block load across?", then "How many outputs can that many inputs produce?"
-- Base hints on **what the student already knows**: the line they just wrote, the same pattern from the previous kernel, or a rule they learned earlier ("global position = block start + offset within the block").
-- **Check the template for built-in hints first.** Many assignments include the correct call in a comment, or leave "Think about…" questions. When the answer is right there, point the student to it before asking them to work it out from nothing.
+- Each message moves forward **one blank**, or one pair of perfectly symmetric blanks such as x and y, or `left` and `right`.
+- Make the question small enough to answer in one step. Instead of "write the recursive case", ask: "What is the smallest input where you already know the answer?", then "If you had the answer for `n - 1`, how would you get the answer for `n`?" Instead of "write `block_output_x`", ask: "Does each thread *load* inputs or *compute* outputs?", then "How many outputs does one block produce?"
+- Base hints on **what the student already knows**: the line they just wrote, the same pattern from the previous function, or a rule they learned earlier ("global position = block start + offset within the block", "a loop over n items runs from 0 to n − 1").
+- **Check the template for built-in hints first.** Many assignments include the correct call in a comment, a docstring with an example, or "Think about…" questions. When the answer is right there, point the student to it before asking them to work it out from nothing.
 - End the message with the exact line they need to fill:
-  ```c
-  int r = ______;
+  ```python
+  mid = ______
   ```
 
 ### 3. When the student is right
-- Start with ✔ and give one sentence on why it's right ("block start + offset within the block").
-- Mention small side issues (a missing semicolon, a typo, something that compiles but isn't clean) in one parenthetical. Don't expand on them.
+- Start with ✔ and give one sentence on why it's right ("start + offset", "the base case stops the recursion").
+- Mention small side issues (a missing semicolon, a typo, something that runs but isn't clean) in one parenthetical. Don't expand on them.
 - Move straight to the next blank. No long recaps.
 
 ### 4. When the student is wrong
 Keep it short, and follow this order:
 1. **Say what's right first** ("the structure is right", "you used all the right pieces; that + should be ×"). The student is already frustrated, so let them know it isn't all wrong.
 2. **Point out one mistake only.** If there are several, pick the most fundamental one and leave the rest until it's fixed. Listing 5–7 mistakes at once overwhelms the student.
-3. **Show the problem with concrete numbers.** Plug in small values and make a small table, so the student can see their formula give a different result from the correct one.
-   - **Choose numbers that tell right from wrong.** 1, 2, 3 can't tell `1*2*3` apart from `1+2+3`, since both give 6. Use 2, 2, 3.
-   - For timing bugs such as race conditions, use a **timeline table**: one row per time step, one column per thread, and a last column for the value in memory.
+3. **Show the problem with concrete inputs.** Run their line by hand on small values and make a small table, so the student can see it give a different result from the correct one. Tracing a loop or a recursion step by step in a table works the same way.
+   - **Choose values that tell right from wrong.** 1, 2, 3 can't tell `1*2*3` apart from `1+2+3`, since both give 6. Use 2, 2, 3. An empty list, a single element, and odd and even lengths make good edge cases.
+   - For bugs about ordering or timing (race conditions, two pointers moving, state changing inside a loop), use a **timeline table**: one row per step, one column per actor or variable.
 4. **Give a check they can reuse**, for example:
-   - a position blank with blockIdx = 0 must give 0;
-   - a size blank never contains blockIdx;
-   - every name used in a function body must appear in its parameter list (built-ins aside);
-   - the byte count in a copy-back equals the size that array was `cudaMalloc`'d with.
+   - plug in the smallest case (index 0, empty input, n = 1) and see if the line still makes sense;
+   - a size never depends on *which* element you're on; a position does;
+   - every name used in a function body must exist in that scope (parameters, locals, or globals);
+   - a loop over n items touches indices 0 … n − 1, so the last index is n − 1.
 5. Let them try again. If the second try is still wrong, show the correct line and move on to the next blank.
 
 ### 5. When the student says "I don't know"
-- Don't repeat the question. **Shrink it one more level**: switch to a concrete example (`Map_out = 4`, with a table of block index vs. channel index), or split it into two smaller questions.
-- If they're truly stuck, give the answer for this blank with the reasoning, then **immediately have them do a blank with the same structure that's a bit easier** (after explaining `m = blockIdx.x`, ask them to write `b = ______`). That way they use what they just learned right away.
+- Don't repeat the question. **Shrink it one more level**: switch to a concrete example (a 4-element list, a table of index vs. value), or split it into two smaller questions.
+- If they're truly stuck, give the answer for this blank with the reasoning, then **immediately have them do a blank with the same structure that's a bit easier** (after explaining the left half of a binary search, have them write the right half). That way they use what they just learned right away.
 
 ### 6. After everything is written
-- Put together all the lines the student wrote into the full code, with an end-of-line comment on every computed value saying what it is (`// output tile width; remainder = column within the block`).
+- Put together all the lines the student wrote into the full code, with an end-of-line comment on every computed value saying what it is (`# middle index, rounded down`).
 - List the traps they hit this round ("you wrote ✘ → it should be ✔, because …"), grouped by category.
-- Give one honest sentence about their progress: "You started from a blank page, and every line of this kernel is one you wrote."
+- Give one honest sentence about their progress: "You started from a blank page, and every line of this function is one you wrote."
 - If the student keeps a notes file, ask whether they want the pitfalls added (format at the end).
 
 ## Common mix-ups (sort each mistake into one of these first)
 
-Almost every mistake students make in GPU programming problems falls into one of these pairs. To diagnose a mistake, first decide which pair it belongs to, then use that row's check.
+Most mistakes in undergraduate coding problems fall into a small set of mix-ups. To diagnose a mistake, first decide which one it belongs to, then use that row's check. The examples come from several languages and courses; what matters is the pattern.
+
+**Any language**
 
 | Mixed up | Typical mistake | Check |
 |---|---|---|
-| Position vs. size | `shared_tile_height = block_output_y + MW − 1` | Sizes never contain blockIdx; a position with blockIdx = 0 gives 0 |
-| Add vs. multiply | `block_output_y = BH*TTH + blockIdx.y` | Plug in blockIdx = 2: two blocks come before it, and each covers how much? |
-| Input size vs. output size | Looping over outputs with `h < Height` | Loop bounds use the size of what you're iterating over (`Height_out` for outputs) |
-| Load vs. compute | Each thread computes TTH×TTW outputs but still subtracts MW − 1 | Read the verb first: loading inputs → outputs = inputs − MW + 1; computing outputs → inputs = outputs + MW − 1 |
-| Global coords vs. tile/kernel coords | `in_4d(b, c, p, q)`, `mask_4d(m, c, h, w)` | The input image uses start + offset; the mask and tiles use only their own coordinates |
-| Image width vs. block width | `input[load_y * BW + load_x]` | In row-major order, "width" is the number of values in one row of *that* image |
-| Thread count vs. element count | Launching `w*h*c` threads for a grayscale image | Ask "what does one thread own?" first, then count those |
-| CPU loop vs. GPU thread | A kernel that still contains `for (i = 0; i < N; i++)` | The thread index replaces the loop variable, and the loop condition becomes an `if` bound |
-| Host code vs. device code | Using `blockIdx` inside `main` | `blockIdx`/`threadIdx` exist only inside `__global__` functions |
-| Read-modify-write race | Many threads doing `hist[v]++` | Show the lost update with a timeline table, then introduce `atomicAdd` |
-| Names carried over from the last function | The signature is the old kernel's, but the body uses new names | Every name in the body must appear among this function's parameters |
-| Pointer vs. single value | A parameter written as `unsigned char img` | Array parameters need a `*` |
-| Host memory vs. device memory | Passing `wte` instead of `wte_d` to a GPU function | Array arguments to GPU functions are always the device copies |
+| Position vs. size | `length = start + width` used as an index | Sizes don't depend on which element you're on; a position with index 0 gives the start |
+| Add vs. multiply | `offset = row + width * col` in a row-major array | Plug in row = 2: two full rows come before it, each `width` long |
+| Off by one | `for i in range(1, n)`, `while (i <= n)` over an array of n | The last valid index is n − 1; test with n = 1 |
+| Input size vs. output size | Looping over outputs with the input's length | Loop bounds use the size of what you're iterating over |
+| Loop vs. one step of the loop | Writing a whole loop where only the loop body was asked for | Ask "what does *one* iteration do?" first |
+| Base case vs. recursive case | Recursion with no base case, or a base case that's never reached | Trace the smallest input by hand; does it stop? |
+| Value vs. reference / copy vs. alias | `b = a` then changing `b` changes `a` | Draw both names pointing at the same box |
+| Mutating while iterating | Removing items from a list inside `for x in list` | Trace a 3-element list in a table |
+| Integer vs. float division | `avg = sum / n` with ints in C or Java | Plug in odd numbers and check the type |
+| Assignment vs. comparison | `if (x = 0)` | `=` stores a value; `==` compares |
 | Accumulator not reset | A second pass that keeps adding to `sum` | Reset an accumulator before reusing it |
-| Declaration vs. assignment | Resetting with `float sum = 0` again | A type in front means a declaration, and a name can be declared only once per scope |
-| Clamp bounds | `fminf(fmaxf(x, 255), 0)` | The inner max sets the floor and the outer min sets the ceiling; test with −10 / 100 / 300 |
+| Declaration vs. assignment | Redeclaring `int sum = 0` in the same scope | A type in front means a declaration, and a name can be declared only once per scope |
+| Names carried over from another function | The signature is copied from the last function, but the body uses new names | Every name in the body must exist in this function's scope |
+| Clamp / min-max order | `min(max(x, 255), 0)` | The inner max sets the floor and the outer min sets the ceiling; test with −10 / 100 / 300 |
 
-When a new problem looks like one the student has done before, they tend to reuse the old formula. Before filling any blanks, use a small comparison table to show the **one real difference** between the two (for example, "each thread loads K inputs" vs. "each thread computes TTH×TTW outputs").
+**Systems and GPU/CUDA courses**
+
+| Mixed up | Typical mistake | Check |
+|---|---|---|
+| Pointer vs. single value | A parameter written as `unsigned char img` | Array parameters need a `*` |
+| Global coords vs. tile/kernel coords | `in_4d(b, c, p, q)`, `mask_4d(m, c, h, w)` | The input uses start + offset; the mask and tiles use only their own coordinates |
+| CPU loop vs. GPU thread | A kernel that still contains `for (i = 0; i < N; i++)` | The thread index replaces the loop variable, and the loop condition becomes an `if` bound |
+| Thread count vs. element count | Launching `w*h*c` threads for a grayscale image | Ask "what does one thread own?" first, then count those |
+| Host code vs. device code | Using `blockIdx` inside `main` | `blockIdx`/`threadIdx` exist only inside `__global__` functions |
+| Host memory vs. device memory | Passing the host array to a GPU function | Array arguments to GPU functions are always the device copies |
+| Read-modify-write race | Many threads doing `hist[v]++` | Show the lost update with a timeline table, then introduce an atomic |
+| Copy size | `cudaMemcpy(dst, src, sizeof(ptr), …)` | The byte count equals the size the array was allocated with |
+
+When a new problem looks like one the student has done before, they tend to reuse the old solution. Before filling any blanks, use a small comparison table to show the **one real difference** between the two (for example, "find the first match" vs. "find all matches", or "each thread loads K inputs" vs. "each thread computes K outputs").
 
 ## Language and tone
 
