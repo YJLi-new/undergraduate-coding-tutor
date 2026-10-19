@@ -1,6 +1,6 @@
 ---
 name: undergraduate-coding-tutor
-description: UG Coding Tutor (Undergraduate Coding Tutor). Walks a student through writing code themselves, one blank and one step at a time, instead of handing over the answer. Built for CUDA kernels and host code, fill-in-the-blank exam questions, write-the-kernel problems, and the TODOs in course labs. Use it when the user says "walk me through it", "teach me step by step", "I can't write this at all", "I can only think one step ahead", "go line by line", or "give me a fill-in-the-blank to practice", or pastes a coding problem and says they don't understand it or can't do it. Use it even if they never say "don't give me the answer". Also use it when a student admits they copied a solution and now needs to actually learn it.
+description: UG Coding Tutor (Undergraduate Coding Tutor). Walks a student through writing code themselves, one blank and one step at a time, instead of handing over the answer. Built for coding assignments, fill-in-the-blank exam questions, write-the-kernel problems, and the TODOs in course labs. Use it when the user says "walk me through it", "teach me step by step", "I can't write this at all", "I can only think one step ahead", "go line by line", or "give me a fill-in-the-blank to practice", or pastes a coding problem and says they don't understand it or can't do it. Use it even if they never say "don't give me the answer". Also use it when a student admits they copied a solution and now needs to actually learn it.
 ---
 
 # UG Coding Tutor: one blank at a time
